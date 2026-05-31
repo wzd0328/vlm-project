@@ -211,6 +211,39 @@ cp -r minimind-3v ./scripts/minimind-3v
 cd scripts && python web_demo_vlm.py
 ```
 
+
+## 🔎 RAG + Agent Demo（零依赖）
+
+本仓库新增了一个不依赖外部大模型的最小 RAG + Agent 示例，便于先理解“检索增强生成”的工程链路，再替换为真实 MiniMind-V 或其它 LLM。
+
+### 1' 下载基础资源与数据集
+
+README 原始命令仍然可直接使用；也可以运行封装脚本统一下载 SigLIP2 视觉编码器、`llm_768.pth` 以及快速开始需要的 `sft_i2t.parquet`：
+
+```bash
+python scripts/download_minimindv_assets.py --dataset sft
+```
+
+如果只想查看将要执行的下载命令并生成 `download_manifest.minimindv.json`，可运行：
+
+```bash
+python scripts/download_minimindv_assets.py --dataset sft --dry-run
+```
+
+> 注：权重和 Parquet 数据集体积较大，`out/` 与 `dataset/*.parquet` 不建议提交到 git。
+
+### 2' 运行 RAG + Agent 示例
+
+```bash
+python rag/simple_rag_agent.py --question "MiniMind-V 需要下载哪些基础资源和数据集？"
+```
+
+示例中的中文注释解释了核心原理：
+
+- `TinyVectorIndex`：把 README 文档切块，并用“分词 + 词频余弦相似度”模拟向量检索；生产环境可替换为 embedding 模型 + FAISS/Milvus。
+- `MiniMindRAG`：根据用户问题检索最相关文档片段，把上下文拼到回答中；接入真实 LLM 时，将 `question + context` 作为 prompt 即可。
+- `MiniMindAgent`：先根据问题选择工具，例如检索 README 或检查本地权重/数据是否存在，再执行工具并组织回复；这就是最小可运行的 Agent 工具调用流程。
+
 ## Ⅱ 🛠️ 模型训练
 
 <details style="color:rgb(128,128,128)">
