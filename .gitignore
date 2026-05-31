@@ -3,3 +3,6 @@ out
 website/
 docs-minimind-v/
 测试.py
+model/siglip2-base-p32-256-ve/
+dataset/*.parquet
+download_manifest.minimindv.json
